@@ -5,25 +5,25 @@ class User::Create
   include ActiveModel::Validations
 
   attribute :email
-  attribute :password
   attribute :encrypted_password
+  attribute :password
   attribute :password_confirmation
 
   def call
     validate!
     encrypt_password
     save_user
-  rescue ActiveModel::RecordInvalid
+  rescue ActiveModel::ValidationError
     raise CommonErrors::CommandValidationFailed
   end
 
   private
 
   def encrypt_password
-    @encrypted_password = BCrypt::Password.new(password_hash)
+    @encrypted_password = BCrypt::Password.create(password)
   end
 
   def save_user
-    User.create(attributes)
+    User.create(attributes.except(:password, :password_confirmation))
   end
 end
