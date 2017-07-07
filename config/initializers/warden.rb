@@ -1,5 +1,5 @@
 Rails.application.config.middleware.insert_after ActionDispatch::Session::CookieStore, Warden::Manager do |manager|
-  manager.default_strategies :password, :cookie
+  manager.default_strategies :password
   manager.failure_app = lambda { |env| SessionsController.action(:new).call(env) }
 end
 
@@ -9,10 +9,6 @@ end
 
 Warden::Manager.serialize_from_session do |session_token|
   User.find_by(session_token: session_token)
-end
-
-Warden::Manager.after_authentication scope: :user do |user, auth, opts|
-  request.session['session_token'] = user.generate_session_token!
 end
 
 Warden::Manager.before_logout scope: :user do |user, auth, opts|
@@ -28,17 +24,5 @@ Warden::Strategies.add(:password) do
     user = User.find_by(email: params['email'])
     return success!(user) if user && user.authenticate(params['password'])
     fail 'Invalid email or password'
-  end
-end
-
-Warden::Strategies.add(:cookie) do
-  def valid?
-    request.session['session_token']
-  end
-
-  def authenticate!
-    user = User.find_by(session_token: request.session['session_token'])
-    return success!(user) if user
-    fail! "Could not log in"
   end
 end

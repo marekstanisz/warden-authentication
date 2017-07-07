@@ -1,4 +1,8 @@
 %h2 Main page
 %h3 Just because it's fun
 
-= "currently logged in as: #{current_user.try(:email)}"
+%p= "currently logged in as: #{current_user.try(:email)}"
+
+%p= link_to 'Login', new_session_path unless current_user
+
+%p= link_to 'Logout', session_path, method: :delete if current_user
