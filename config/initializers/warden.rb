@@ -4,7 +4,7 @@ Rails.application.config.middleware.insert_after ActionDispatch::Session::Cookie
 end
 
 Warden::Manager.serialize_into_session do |user|
-  user.generate_session_token!
+  User::SessionTokenGenerator.new(user).call
 end
 
 Warden::Manager.serialize_from_session do |session_token|
@@ -12,7 +12,7 @@ Warden::Manager.serialize_from_session do |session_token|
 end
 
 Warden::Manager.before_logout scope: :user do |user, auth, opts|
-  user.update_attribute :session_token, nil
+  user.update(:session_token, nil)
 end
 
 Warden::Strategies.add(:password) do
@@ -22,7 +22,7 @@ Warden::Strategies.add(:password) do
 
   def authenticate!
     user = User.find_by(email: params['email'])
-    return success!(user) if user && user.authenticate(params['password'])
+    return success!(user) if user && User::Authenticate.new(user, params['password']).call
     fail 'Invalid email or password'
   end
 end

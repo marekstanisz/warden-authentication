@@ -9,6 +9,8 @@ class User::Create
   attribute :password
   attribute :password_confirmation
 
+  validates :password, confirmation: true
+
   def call
     validate!
     encrypt_password
