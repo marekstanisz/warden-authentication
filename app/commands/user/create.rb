@@ -10,6 +10,7 @@ class User::Create
   attribute :password_confirmation
 
   validates :password, confirmation: true
+  validates :password, length: { minimum: 8 }
 
   def call
     validate!

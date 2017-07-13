@@ -1,11 +1,11 @@
 class SessionsController < ApplicationController
   def new
-    flash.now.alert = warden.message if warden.message.present?
-    render 'new'
+    render :new
   end
 
   def create
-    warden.authenticate!(:password)
+    warden.authenticate(:password)
+    return render :new, alert: warden.message unless warden.authenticated?
     respond_to do |format|
       format.html { redirect_to root_url, notice: 'Logged in' }
     end
