@@ -16,8 +16,6 @@ class User::Create
     validate!
     encrypt_password
     save_user
-  rescue ActiveModel::ValidationError
-    raise CommonErrors::CommandValidationFailed
   end
 
   private
