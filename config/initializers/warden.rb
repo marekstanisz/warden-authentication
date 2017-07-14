@@ -12,7 +12,7 @@ Warden::Manager.serialize_from_session do |session_token|
 end
 
 Warden::Manager.before_logout scope: :user do |user, auth, opts|
-  user.update(:session_token, nil)
+  user.update(session_token: nil)
 end
 
 Warden::Strategies.add(:password) do

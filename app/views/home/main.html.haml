@@ -4,5 +4,6 @@
 %p= "currently logged in as: #{current_user.try(:email)}"
 
 %p= link_to 'Login', new_session_path unless current_user
+%p= link_to 'Sign up', new_user_path unless current_user
 
 %p= link_to 'Logout', session_path, method: :delete if current_user

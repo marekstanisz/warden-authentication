@@ -4,13 +4,15 @@ class User::Create
   include Virtus.model
   include ActiveModel::Validations
 
-  attribute :email
-  attribute :encrypted_password
-  attribute :password
-  attribute :password_confirmation
+  attribute :email, String
+  attribute :encrypted_password, String
+  attribute :password, String
+  attribute :password_confirmation, String
 
   validates :password, confirmation: true
   validates :password, length: { minimum: 8 }
+
+  attr_reader :user
 
   def call
     validate!
@@ -25,6 +27,6 @@ class User::Create
   end
 
   def save_user
-    User.create(attributes.except(:password, :password_confirmation))
+    @user = User.create(attributes.except(:password, :password_confirmation))
   end
 end
